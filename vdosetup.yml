@@ -1,0 +1,62 @@
+---
+
+- hosts:
+  - vdo
+
+  tasks:
+  - name: create jrnl partitions
+    parted:
+      device: "{{ item }}"
+      state: present
+      number: 1
+      part_end: 10GiB
+    with_items:
+      "{{ vdo_disks }}"
+
+  - name: create data partitions
+    parted:
+      device: "{{ item }}"
+      state: present
+      number: 2
+      part_start: 10GiB
+    with_items:
+      "{{ vdo_disks }}"
+
+  - name: create vdo device(s)
+    vdo:
+      name: "{{ item.vdoname }}"
+      state: present
+      device: "{{ item.partname }}"
+      logicalsize: "{{ item.virtsize }}"
+      emulate512: enabled
+      compression: "{{ compression }}"
+      deduplication: "{{ deduplication }}"
+      writepolicy: sync
+    with_items:
+      "{{ vdo_partitions }}"
+
+  - name: VG creation for all disks
+    lvg:
+      vg: vdo
+      pvs: "{{ vdo_disks|join('1,') + '1' }},{{ vdo_paths|join(',') }}"
+
+  - name: Create journal LVs
+    lvol:
+      vg: vdo
+      lv: "{{ item[5:] + 'JRNL'}}"
+      size: 100%FREE
+      shrink: no
+      pvs: "{{ item  + '1'}}"
+    with_items:
+      "{{ vdo_disks }}"
+
+  - name: Create data LVs
+    lvol:
+      vg: vdo
+      lv: "{{ item.0[5:] + 'DATA'}}"
+      size: 100%FREE
+      shrink: no
+      pvs: "{{ item.1 }}"
+    with_together:
+      - "{{ vdo_disks }}"
+      - "{{ vdo_paths }}"

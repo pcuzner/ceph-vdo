@@ -1,0 +1,23 @@
+---
+
+osd_objectstore: filestore
+osd_scenario: lvm
+dmcrypt: false
+
+lvm_volumes:
+  - data: vdbDATA
+    data_vg: vdo
+    journal: vdbJRNL
+    journal_vg: vdo
+  - data: vdcDATA
+    data_vg: vdo
+    journal: vdcJRNL
+    journal_vg: vdo
+  - data: vddDATA
+    data_vg: vdo
+    journal: vddJRNL
+    journal_vg: vdo
+  - data: vdeDATA
+    data_vg: vdo
+    journal: vdeJRNL
+    journal_vg: vdo

@@ -1,0 +1,24 @@
+---
+
+# generic options for ALL disks, must be enabled or disabled
+compression: enabled
+deduplication: enabled
+
+vdo_disks:
+  - /dev/vdb
+  - /dev/vdc
+  - /dev/vdd
+  - /dev/vde
+
+vdo_paths:
+  - /dev/mapper/vdo0
+  - /dev/mapper/vdo1
+  - /dev/mapper/vdo2
+  - /dev/mapper/vdo3
+
+# every disk needs a source device, vdo name and size to be specified
+vdo_partitions:
+  - { "partname":"/dev/vdb2", "vdoname": "vdo0", "virtsize": "2T"}
+  - { "partname":"/dev/vdc2", "vdoname": "vdo1", "virtsize": "2T"}
+  - { "partname":"/dev/vdd2", "vdoname": "vdo2", "virtsize": "2T"}
+  - { "partname":"/dev/vde2", "vdoname": "vdo3", "virtsize": "2T"}
